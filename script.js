@@ -37,4 +37,18 @@ function addBankToStage(bank, stage) {
   stageColumn.appendChild(card);
 }
 
-function loadApplication
+function loadApplicationTabs() {
+  const tabs = document.getElementById('tabs');
+  applications.forEach(app => {
+    const tab = document.createElement('div');
+    tab.className = 'tab';
+    tab.textContent = `${app.number} - ${app.name} - ИНН: ${app.inn} - БГ: ${app.bg}`;
+    tabs.appendChild(tab);
+  });
+}
+
+window.onload = function() {
+  loadBankList();
+  loadStageColumns();
+  loadApplicationTabs();
+};
