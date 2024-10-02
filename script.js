@@ -3,7 +3,7 @@ const banks = ['Абс', 'Альфа', 'Алеф', 'Влад', 'ГТ', 'ТСБ',
 const stages = ['заявка', 'доработка', 'на подписании', 'в банке', 'на согласовании', 'заведена', 'отказ'];
 
 let applications = [
-    { number: '12345', name: 'ООО Компания', inn: '7701234567', bg: 'БГ1', banks: [] }
+    { number: '', name: '', inn: '', bg: '', banks: [] }
 ];
 
 let currentApplicationIndex = 0;
@@ -30,6 +30,8 @@ function loadStageColumns() {
         column.appendChild(title);
         stageColumns.appendChild(column);
     });
+
+    loadBanksForCurrentApplication();
 }
 
 function addBankToStage(bank, stage) {
@@ -95,8 +97,9 @@ function loadApplicationTabs() {
     applications.forEach((app, index) => {
         const tab = document.createElement('div');
         tab.className = 'tab';
-        tab.textContent = `${app.number} - ${app.name} - ИНН: ${app.inn} - БГ: ${app.bg}`;
+        tab.textContent = app.number || 'Новая заявка';
         tab.onclick = () => switchApplication(index);
+        if (index === currentApplicationIndex) tab.classList.add('active');
         tabs.appendChild(tab);
     });
 }
@@ -104,6 +107,20 @@ function loadApplicationTabs() {
 function switchApplication(index) {
     currentApplicationIndex = index;
     loadStageColumns();
+    loadApplicationInfo();
+}
+
+function loadApplicationInfo() {
+    const application = applications[currentApplicationIndex];
+    const stageColumns = document.getElementById('stageColumns');
+
+    if (!application.number) {
+        application.number = prompt('Введите номер заявки');
+        application.name = prompt('Введите название компании');
+        application.inn = prompt('Введите ИНН компании');
+        application.bg = prompt('Введите БГ');
+    }
+
     loadBanksForCurrentApplication();
 }
 
@@ -115,21 +132,10 @@ function loadBanksForCurrentApplication() {
 }
 
 function addNewApplication() {
-    const newApplication = {
-        number: prompt('Введите номер заявки'),
-        name: prompt('Введите название компании'),
-        inn: prompt('Введите ИНН компании'),
-        bg: prompt('Введите БГ'),
-        banks: []
-    };
-
-    if (newApplication.number && newApplication.name && newApplication.inn && newApplication.bg) {
-        applications.push(newApplication);
-        loadApplicationTabs();
-        switchApplication(applications.length - 1);
-    } else {
-        alert('Все поля должны быть заполнены!');
-    }
+    const newApplication = { number: '', name: '', inn: '', bg: '', banks: [] };
+    applications.push(newApplication);
+    loadApplicationTabs();
+    switchApplication(applications.length - 1);
 }
 
 function deleteCurrentApplication() {
