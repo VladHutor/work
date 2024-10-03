@@ -1,4 +1,4 @@
-const url = 'https://script.google.com/macros/s/AKfycbyxp8HxakHB688yDOsi8H0ar3s1hslDnii5CfUgErF5amOWGabeLhPaXaiUqXBHTWt5iQ/exec'; // Замените на ваш URL
+const url = 'https://script.google.com/macros/s/AKfycbyQ4RCtpzf5174VNNJUiz-S5gYWLqsARvnvxapUmrw6g5l8aRQjaaBtYBRkbZMHysSpGg/exec'; // Замените на ваш URL
 
 async function saveApplication(application) {
     try {
