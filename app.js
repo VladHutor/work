@@ -1,5 +1,5 @@
-// Firebase configuration
-const firebaseConfig = {
+// Firebase configuration (v8)
+var firebaseConfig = {
   apiKey: "AIzaSyBzT-NU0UnK2-KlbI5vH4Xz3IHzrRbGfD8",
   authDomain: "hutor-24bfc.firebaseapp.com",
   projectId: "hutor-24bfc",
@@ -12,7 +12,7 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
-const db = firebase.firestore();
+var db = firebase.firestore();
 
 // Функция для сохранения заявки
 function saveRequest(clientNumber, clientName, clientInn, clientBg) {
@@ -31,38 +31,36 @@ function saveRequest(clientNumber, clientName, clientInn, clientBg) {
       reject: []
     }
   })
-  .then((docRef) => {
+  .then(function(docRef) {
     console.log("Заявка сохранена с ID: ", docRef.id);
   })
-  .catch((error) => {
+  .catch(function(error) {
     console.error("Ошибка при сохранении заявки: ", error);
   });
 }
 
 // Пример вызова функции при создании заявки
-document.querySelector('.add-tab').addEventListener('click', () => {
-  const clientNumber = document.getElementById('client-number').value;
-  const clientName = document.getElementById('client-name').value;
-  const clientInn = document.getElementById('client-inn').value;
-  const clientBg = document.getElementById('client-bg').value;
+document.querySelector('.add-tab').addEventListener('click', function() {
+  var clientNumber = document.getElementById('client-number').value;
+  var clientName = document.getElementById('client-name').value;
+  var clientInn = document.getElementById('client-inn').value;
+  var clientBg = document.getElementById('client-bg').value;
 
   saveRequest(clientNumber, clientName, clientInn, clientBg);
 });
 
 // Функция для загрузки заявок из Firestore
 function loadRequests() {
-  db.collection("requests").get().then((querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-      const requestData = doc.data();
-      console.log(`Заявка: ${requestData.clientNumber}, Клиент: ${requestData.clientName}`);
-      
-      // Логика для создания вкладки и отображения данных на странице
-      createTabFromData(doc.id, requestData);
+  db.collection("requests").get().then(function(querySnapshot) {
+    querySnapshot.forEach(function(doc) {
+      var requestData = doc.data();
+      console.log("Заявка: ", requestData.clientNumber, " Клиент: ", requestData.clientName);
+      // Здесь можно добавить логику для отображения заявок на странице
     });
   });
 }
 
-// Вызов функции загрузки заявок при загрузке страницы
+// Загрузка заявок при открытии страницы
 window.onload = function() {
   loadRequests();
 };
