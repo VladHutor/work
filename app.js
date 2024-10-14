@@ -1,8 +1,4 @@
-// Импорт функций Firebase SDK
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc } from "firebase/firestore"; 
-
-// Firebase конфигурация
+// Инициализация Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBzT-NU0UnK2-KlbI5vH4Xz3IHzrRbGfD8",
   authDomain: "hutor-24bfc.firebaseapp.com",
@@ -14,13 +10,13 @@ const firebaseConfig = {
 };
 
 // Инициализация Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 // Функция для сохранения заявки
 async function saveRequest(clientNumber, clientName, clientInn, clientBg) {
   try {
-    const docRef = await addDoc(collection(db, "requests"), {
+    const docRef = await db.collection("requests").add({
       clientNumber: clientNumber,
       clientName: clientName,
       clientInn: clientInn,
@@ -53,7 +49,7 @@ document.querySelector('.add-tab').addEventListener('click', () => {
 
 // Функция для загрузки заявок из Firestore
 async function loadRequests() {
-  const querySnapshot = await getDocs(collection(db, "requests"));
+  const querySnapshot = await db.collection("requests").get();
   querySnapshot.forEach((doc) => {
     const requestData = doc.data();
     console.log(`Заявка: ${requestData.clientNumber}, Клиент: ${requestData.clientName}`);
@@ -61,27 +57,6 @@ async function loadRequests() {
     // Логика для создания вкладки и отображения данных на странице
     createTabFromData(doc.id, requestData);
   });
-}
-
-// Функция для обновления этапов при перетаскивании банка
-async function updateStage(requestId, bankName, newStage) {
-  const requestRef = doc(db, "requests", requestId);
-  
-  const requestDoc = await getDoc(requestRef);
-  if (requestDoc.exists()) {
-    const stages = requestDoc.data().stages;
-
-    // Удаление банка из старых этапов
-    for (const stage in stages) {
-      stages[stage] = stages[stage].filter(bank => bank !== bankName);
-    }
-
-    // Добавляем банк в новый этап
-    stages[newStage].push(bankName);
-
-    // Обновляем документ в Firestore
-    await updateDoc(requestRef, { stages: stages });
-  }
 }
 
 // Вызов функции загрузки заявок при загрузке страницы
