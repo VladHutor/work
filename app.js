@@ -14,6 +14,23 @@ firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 var db = firebase.firestore();
 
+// Функция для добавления заявки в интерфейс
+function addTabToUI(clientNumber, clientName, clientInn, clientBg, docId) {
+  const tabContainer = document.querySelector('.tabs');
+  const tab = document.createElement('div');
+  tab.className = 'tab';
+  tab.textContent = `Заявка ${clientNumber}`;
+  
+  // Событие для переключения между заявками (пока без логики переключения)
+  tab.addEventListener('click', function() {
+    console.log('Переключение на заявку:', clientNumber);
+    // Здесь можно реализовать логику для отображения содержимого заявки
+  });
+
+  // Добавляем вкладку в интерфейс
+  tabContainer.appendChild(tab);
+}
+
 // Функция для сохранения заявки
 function saveRequest(clientNumber, clientName, clientInn, clientBg) {
   db.collection("requests").add({
@@ -33,6 +50,8 @@ function saveRequest(clientNumber, clientName, clientInn, clientBg) {
   })
   .then(function(docRef) {
     console.log("Заявка сохранена с ID: ", docRef.id);
+    // Добавляем новую заявку в интерфейс после сохранения
+    addTabToUI(clientNumber, clientName, clientInn, clientBg, docRef.id);
   })
   .catch(function(error) {
     console.error("Ошибка при сохранении заявки: ", error);
@@ -46,7 +65,11 @@ document.querySelector('.add-tab').addEventListener('click', function() {
   var clientInn = document.getElementById('client-inn').value;
   var clientBg = document.getElementById('client-bg').value;
 
-  saveRequest(clientNumber, clientName, clientInn, clientBg);
+  if (clientNumber && clientName && clientInn && clientBg) {
+    saveRequest(clientNumber, clientName, clientInn, clientBg);
+  } else {
+    alert('Пожалуйста, заполните все поля.');
+  }
 });
 
 // Функция для загрузки заявок из Firestore
@@ -55,7 +78,8 @@ function loadRequests() {
     querySnapshot.forEach(function(doc) {
       var requestData = doc.data();
       console.log("Заявка: ", requestData.clientNumber, " Клиент: ", requestData.clientName);
-      // Здесь можно добавить логику для отображения заявок на странице
+      // Добавляем каждую загруженную заявку в интерфейс
+      addTabToUI(requestData.clientNumber, requestData.clientName, requestData.clientInn, requestData.clientBg, doc.id);
     });
   });
 }
