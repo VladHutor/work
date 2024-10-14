@@ -1,4 +1,4 @@
-// Инициализация Firebase
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBzT-NU0UnK2-KlbI5vH4Xz3IHzrRbGfD8",
   authDomain: "hutor-24bfc.firebaseapp.com",
@@ -9,32 +9,34 @@ const firebaseConfig = {
   measurementId: "G-YWGM1XWL9M"
 };
 
-// Инициализация Firebase
-const app = firebase.initializeApp(firebaseConfig);
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+firebase.analytics();
 const db = firebase.firestore();
 
 // Функция для сохранения заявки
-async function saveRequest(clientNumber, clientName, clientInn, clientBg) {
-  try {
-    const docRef = await db.collection("requests").add({
-      clientNumber: clientNumber,
-      clientName: clientName,
-      clientInn: clientInn,
-      clientBg: clientBg,
-      banks: [],
-      stages: {
-        task: [],
-        rework: [],
-        link: [],
-        bankWait: [],
-        proposal: [],
-        reject: []
-      }
-    });
+function saveRequest(clientNumber, clientName, clientInn, clientBg) {
+  db.collection("requests").add({
+    clientNumber: clientNumber,
+    clientName: clientName,
+    clientInn: clientInn,
+    clientBg: clientBg,
+    banks: [],
+    stages: {
+      task: [],
+      rework: [],
+      link: [],
+      bankWait: [],
+      proposal: [],
+      reject: []
+    }
+  })
+  .then((docRef) => {
     console.log("Заявка сохранена с ID: ", docRef.id);
-  } catch (e) {
-    console.error("Ошибка при сохранении заявки: ", e);
-  }
+  })
+  .catch((error) => {
+    console.error("Ошибка при сохранении заявки: ", error);
+  });
 }
 
 // Пример вызова функции при создании заявки
@@ -48,14 +50,15 @@ document.querySelector('.add-tab').addEventListener('click', () => {
 });
 
 // Функция для загрузки заявок из Firestore
-async function loadRequests() {
-  const querySnapshot = await db.collection("requests").get();
-  querySnapshot.forEach((doc) => {
-    const requestData = doc.data();
-    console.log(`Заявка: ${requestData.clientNumber}, Клиент: ${requestData.clientName}`);
-    
-    // Логика для создания вкладки и отображения данных на странице
-    createTabFromData(doc.id, requestData);
+function loadRequests() {
+  db.collection("requests").get().then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      const requestData = doc.data();
+      console.log(`Заявка: ${requestData.clientNumber}, Клиент: ${requestData.clientName}`);
+      
+      // Логика для создания вкладки и отображения данных на странице
+      createTabFromData(doc.id, requestData);
+    });
   });
 }
 
