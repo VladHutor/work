@@ -3,19 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Дешборд кредитных заявок</title>
-    <link rel="stylesheet" href="style.css"> <!-- Подключение CSS файла -->
+    <title>Дешборд</title>
+    <!-- Подключение Firebase SDK -->
+    <script type="module" src="./app.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Дешборд кредитных заявок</h1>
-            <button id="addApplicationBtn">+ Добавить заявку</button> <!-- Кнопка для добавления новой заявки -->
-        </header>
-        <div id="board" class="board">
-            <!-- Здесь будут добавляться заявки -->
+        <div class="header">
+            <button class="add-tab">Создать заявку</button>
+        </div>
+        <div class="input-fields">
+            <input id="client-number" type="text" placeholder="Номер клиента">
+            <input id="client-name" type="text" placeholder="Название клиента">
+            <input id="client-inn" type="text" placeholder="ИНН">
+            <input id="client-bg" type="text" placeholder="Какая БГ">
+        </div>
+        <div class="tabs"></div>
+        <div class="columns">
+            <div class="column" id="task">Задача</div>
+            <div class="column" id="rework">Доработка</div>
+            <div class="column" id="link">Ссылка</div>
+            <div class="column" id="bank-wait">Ожидание банка</div>
+            <div class="column" id="proposal">Предложка</div>
+            <div class="column" id="reject">Отказ</div>
         </div>
     </div>
-    <script src="script.js"></script> <!-- Подключение JS файла -->
 </body>
 </html>
