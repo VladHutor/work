@@ -14,21 +14,59 @@ firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 var db = firebase.firestore();
 
+let activeRequestId = null; // Для отслеживания текущей активной заявки
+
 // Функция для добавления заявки в интерфейс
 function addTabToUI(clientNumber, clientName, clientInn, clientBg, docId) {
   const tabContainer = document.querySelector('.tabs');
   const tab = document.createElement('div');
   tab.className = 'tab';
-  tab.textContent = `Заявка ${clientNumber}`;
-  
-  // Событие для переключения между заявками (пока без логики переключения)
+  tab.textContent = clientNumber;
+
+  // Событие для переключения между заявками
   tab.addEventListener('click', function() {
-    console.log('Переключение на заявку:', clientNumber);
-    // Здесь можно реализовать логику для отображения содержимого заявки
+    setActiveTab(docId, clientNumber, clientName, clientInn, clientBg);
   });
 
-  // Добавляем вкладку в интерфейс
+  // Кнопка удаления заявки
+  const deleteBtn = document.createElement('button');
+  deleteBtn.textContent = 'Удалить';
+  deleteBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    deleteRequest(docId, tab);
+  });
+
+  tab.appendChild(deleteBtn);
   tabContainer.appendChild(tab);
+}
+
+// Функция для удаления заявки
+function deleteRequest(docId, tabElement) {
+  db.collection("requests").doc(docId).delete().then(function() {
+    console.log("Заявка удалена с ID: ", docId);
+    tabElement.remove();
+  }).catch(function(error) {
+    console.error("Ошибка при удалении заявки: ", error);
+  });
+}
+
+// Установка активной вкладки
+function setActiveTab(docId, clientNumber, clientName, clientInn, clientBg) {
+  activeRequestId = docId;
+
+  // Убираем выделение с предыдущей активной вкладки
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+
+  // Выделяем текущую вкладку
+  event.target.classList.add('active');
+
+  // Отображаем данные текущей заявки в полях ввода
+  document.getElementById('client-number').value = clientNumber;
+  document.getElementById('client-name').value = clientName;
+  document.getElementById('client-inn').value = clientInn;
+  document.getElementById('client-bg').value = clientBg;
 }
 
 // Функция для сохранения заявки
@@ -50,12 +88,36 @@ function saveRequest(clientNumber, clientName, clientInn, clientBg) {
   })
   .then(function(docRef) {
     console.log("Заявка сохранена с ID: ", docRef.id);
-    // Добавляем новую заявку в интерфейс после сохранения
     addTabToUI(clientNumber, clientName, clientInn, clientBg, docRef.id);
   })
   .catch(function(error) {
     console.error("Ошибка при сохранении заявки: ", error);
   });
+}
+
+// Функция для сохранения изменений в активной заявке
+function saveCurrentRequest() {
+  const clientNumber = document.getElementById('client-number').value;
+  const clientName = document.getElementById('client-name').value;
+  const clientInn = document.getElementById('client-inn').value;
+  const clientBg = document.getElementById('client-bg').value;
+
+  if (activeRequestId) {
+    db.collection("requests").doc(activeRequestId).update({
+      clientNumber: clientNumber,
+      clientName: clientName,
+      clientInn: clientInn,
+      clientBg: clientBg
+    })
+    .then(() => {
+      console.log("Параметры заявки обновлены для ID: ", activeRequestId);
+    })
+    .catch(error => {
+      console.error("Ошибка при обновлении заявки: ", error);
+    });
+  } else {
+    alert("Нет активной заявки для сохранения.");
+  }
 }
 
 // Пример вызова функции при создании заявки
@@ -72,13 +134,15 @@ document.querySelector('.add-tab').addEventListener('click', function() {
   }
 });
 
+// Кнопка сохранения параметров
+document.querySelector('.save-params').addEventListener('click', saveCurrentRequest);
+
 // Функция для загрузки заявок из Firestore
 function loadRequests() {
   db.collection("requests").get().then(function(querySnapshot) {
     querySnapshot.forEach(function(doc) {
       var requestData = doc.data();
       console.log("Заявка: ", requestData.clientNumber, " Клиент: ", requestData.clientName);
-      // Добавляем каждую загруженную заявку в интерфейс
       addTabToUI(requestData.clientNumber, requestData.clientName, requestData.clientInn, requestData.clientBg, doc.id);
     });
   });
