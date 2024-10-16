@@ -1,16 +1,37 @@
-<div class="container">
-  <button class="add-tab">Создать заявку</button>
-  <div class="tabs"></div>
-  <div class="inputs-container">
-    <div class="input-fields">
-      <input type="text" id="clientNumber" placeholder="Номер клиента">
-      <input type="text" id="clientName" placeholder="Название клиента">
-      <input type="text" id="clientINN" placeholder="ИНН">
-      <input type="text" id="clientBG" placeholder="Какая БГ">
-      <button class="save-params">Сохранить параметры</button>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дешборд</title>
+    <!-- Подключение Firebase SDK через CDN для v8 -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="add-tab">Создать заявку</button>
+        </div>
+        <div class="input-fields">
+            <input id="client-number" type="text" placeholder="Номер клиента">
+            <input id="client-name" type="text" placeholder="Название клиента">
+            <input id="client-inn" type="text" placeholder="ИНН">
+            <input id="client-bg" type="text" placeholder="Какая БГ">
+        </div>
+        <div class="tabs"></div>
+        <div class="columns">
+            <div class="column" id="task">Задача</div>
+            <div class="column" id="rework">Доработка</div>
+            <div class="column" id="link">Ссылка</div>
+            <div class="column" id="bank-wait">Ожидание банка</div>
+            <div class="column" id="proposal">Предложка</div>
+            <div class="column" id="reject">Отказ</div>
+        </div>
     </div>
-    <div class="comments-field">
-      <textarea id="clientComments" placeholder="Комментарии"></textarea>
-    </div>
-  </div>
-</div>
+    <!-- Подключение логики сайта -->
+    <script src="app.js"></script>
+</body>
+</html>
