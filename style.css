@@ -1,119 +1,90 @@
 body {
-  background-color: #121212;
-  color: #ffffff;
+  background-color: #2c2c2c;
+  color: white;
   font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
-.container {
+.header {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
+  justify-content: space-between;
+  padding: 20px;
+  background-color: #333;
 }
 
-.add-tab {
-  background-color: #007bff;
-  color: #ffffff;
+button {
   padding: 10px 20px;
+  background-color: #444;
+  color: white;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
-  margin-bottom: 20px;
 }
 
-.add-tab:hover {
-  background-color: #0056b3;
+button:hover {
+  background-color: #555;
 }
 
-.tabs {
+.tabs-container {
   display: flex;
-  justify-content: flex-start;
-  margin-bottom: 20px;
-  width: 100%;
 }
 
 .tab {
-  background-color: #2c2c2c;
-  color: #ffffff;
-  padding: 10px 15px;
-  border-radius: 5px;
+  background-color: #444;
   margin-right: 10px;
+  padding: 10px;
   cursor: pointer;
   position: relative;
+  padding-right: 30px;
 }
 
 .tab.active {
-  border: 2px solid #00FF00; /* Зеленая обводка для активной вкладки */
-  background-color: #333333;
+  border: 2px solid yellow;
 }
 
 .tab button {
   position: absolute;
-  top: -5px;
-  right: -5px;
-  background-color: red;
-  color: white;
+  top: 5px;
+  right: 5px;
+  background-color: transparent;
   border: none;
-  border-radius: 50%;
+  color: red;
   cursor: pointer;
+  font-size: 16px;
 }
 
-.tab button:hover {
-  background-color: darkred;
+.tab button::before {
+  content: "✖";
 }
 
-input[type="text"] {
-  background-color: #2c2c2c;
-  color: #ffffff;
-  border: 1px solid #555555;
-  padding: 10px;
-  border-radius: 5px;
-  width: 100%;
-  margin-bottom: 10px;
+.input-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  margin-bottom: 20px;
 }
 
-input[type="text"]:focus {
-  outline: none;
-  border-color: #00FF00;
+input {
+  margin-right: 15px;
 }
 
-button.save-params {
-  background-color: #28a745;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
+textarea {
+  margin-left: 20px;
 }
 
-button.save-params:hover {
-  background-color: #218838;
+.columns-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
 }
 
 .column {
-  display: inline-block;
-  width: 200px;
-  background-color: #2c2c2c;
-  border-radius: 5px;
-  margin: 10px;
-  padding: 10px;
-}
-
-.column h3 {
-  color: #ffffff;
-  margin-bottom: 10px;
-}
-
-.bank {
-  background-color: #333333;
-  color: #ffffff;
+  background-color: #444;
+  width: 15%;
   padding: 10px;
   border-radius: 5px;
-  margin-bottom: 10px;
-  cursor: pointer;
 }
 
-.bank:hover {
-  background-color: #444444;
+h2 {
+  text-align: center;
 }
