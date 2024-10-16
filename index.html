@@ -1,49 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дешборд</title>
+    <!-- Подключение Firebase SDK через CDN для v8 -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="header">
-    <button id="create-request-btn">Создать заявку</button>
-    <div id="tabs-container" class="tabs-container"></div>
-  </div>
-
-  <div class="input-container">
-    <input type="text" id="client-number" placeholder="Номер клиента">
-    <input type="text" id="client-name" placeholder="Название клиента">
-    <input type="text" id="client-inn" placeholder="ИНН">
-    <input type="text" id="client-bg" placeholder="Какая БГ">
-    <textarea id="client-comment" placeholder="Комментарий" rows="5" cols="40"></textarea>
-  </div>
-
-  <div id="columns-container" class="columns-container">
-    <div class="column" id="task-column">
-      <h2>Задача</h2>
+    <div class="container">
+        <div class="header">
+            <button class="add-tab">Создать заявку</button>
+        </div>
+        <div class="input-fields">
+            <input id="client-number" type="text" placeholder="Номер клиента">
+            <input id="client-name" type="text" placeholder="Название клиента">
+            <input id="client-inn" type="text" placeholder="ИНН">
+            <input id="client-bg" type="text" placeholder="Какая БГ">
+        </div>
+        <div class="tabs"></div>
+        <div class="columns">
+            <div class="column" id="task">Задача</div>
+            <div class="column" id="rework">Доработка</div>
+            <div class="column" id="link">Ссылка</div>
+            <div class="column" id="bank-wait">Ожидание банка</div>
+            <div class="column" id="proposal">Предложка</div>
+            <div class="column" id="reject">Отказ</div>
+        </div>
     </div>
-    <div class="column" id="revision-column">
-      <h2>Доработка</h2>
-    </div>
-    <div class="column" id="link-column">
-      <h2>Ссылка</h2>
-    </div>
-    <div class="column" id="waiting-column">
-      <h2>Ожидание банка</h2>
-    </div>
-    <div class="column" id="proposal-column">
-      <h2>Предложка</h2>
-    </div>
-    <div class="column" id="rejected-column">
-      <h2>Отказ</h2>
-    </div>
-  </div>
-
-  <!-- Firebase App -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-  <script src="app.js"></script>
+    <!-- Подключение логики сайта -->
+    <script src="app.js"></script>
 </body>
 </html>
