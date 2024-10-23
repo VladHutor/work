@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Дешборд</title>
-    <!-- Подключение Firebase SDK через CDN для v8 -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js"></script>
@@ -13,6 +12,9 @@
 <body>
     <div class="container">
         <div class="header">
+            <!-- Форма выбора пользователя -->
+            <input id="username" type="text" placeholder="Имя пользователя">
+            <button id="select-user">Выбрать пользователя</button>
             <button class="add-tab">Создать заявку</button>
         </div>
         <div class="input-fields">
@@ -31,7 +33,6 @@
             <div class="column" id="reject">Отказ</div>
         </div>
     </div>
-    <!-- Подключение логики сайта -->
     <script src="app.js"></script>
 </body>
 </html>
