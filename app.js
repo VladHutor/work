@@ -14,7 +14,19 @@ firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 var db = firebase.firestore();
 
-let activeRequestId = null; // Для отслеживания текущей активной заявки
+let activeRequestId = null;
+let currentUser = null;  // Переменная для текущего пользователя
+
+// Функция для выбора пользователя
+function selectUser() {
+  const username = document.getElementById('username').value;
+  if (username) {
+    currentUser = username;
+    loadRequests(); // Загружаем заявки для текущего пользователя
+  } else {
+    alert('Введите имя пользователя');
+  }
+}
 
 // Функция для добавления заявки в интерфейс
 function addTabToUI(clientNumber, clientName, clientInn, clientBg, docId) {
@@ -23,12 +35,10 @@ function addTabToUI(clientNumber, clientName, clientInn, clientBg, docId) {
   tab.className = 'tab';
   tab.textContent = clientNumber;
 
-  // Событие для переключения между заявками
   tab.addEventListener('click', function() {
     setActiveTab(docId, clientNumber, clientName, clientInn, clientBg);
   });
 
-  // Кнопка удаления заявки
   const deleteBtn = document.createElement('button');
   deleteBtn.textContent = 'Удалить';
   deleteBtn.addEventListener('click', function(e) {
@@ -40,38 +50,15 @@ function addTabToUI(clientNumber, clientName, clientInn, clientBg, docId) {
   tabContainer.appendChild(tab);
 }
 
-// Функция для удаления заявки
-function deleteRequest(docId, tabElement) {
-  db.collection("requests").doc(docId).delete().then(function() {
-    console.log("Заявка удалена с ID: ", docId);
-    tabElement.remove();
-  }).catch(function(error) {
-    console.error("Ошибка при удалении заявки: ", error);
-  });
-}
-
-// Установка активной вкладки
-function setActiveTab(docId, clientNumber, clientName, clientInn, clientBg) {
-  activeRequestId = docId;
-
-  // Убираем выделение с предыдущей активной вкладки
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.classList.remove('active');
-  });
-
-  // Выделяем текущую вкладку
-  event.target.classList.add('active');
-
-  // Отображаем данные текущей заявки в полях ввода
-  document.getElementById('client-number').value = clientNumber;
-  document.getElementById('client-name').value = clientName;
-  document.getElementById('client-inn').value = clientInn;
-  document.getElementById('client-bg').value = clientBg;
-}
-
 // Функция для сохранения заявки
 function saveRequest(clientNumber, clientName, clientInn, clientBg) {
+  if (!currentUser) {
+    alert('Выберите пользователя перед сохранением заявки');
+    return;
+  }
+
   db.collection("requests").add({
+    user: currentUser,  // Привязка к пользователю
     clientNumber: clientNumber,
     clientName: clientName,
     clientInn: clientInn,
@@ -87,7 +74,6 @@ function saveRequest(clientNumber, clientName, clientInn, clientBg) {
     }
   })
   .then(function(docRef) {
-    console.log("Заявка сохранена с ID: ", docRef.id);
     addTabToUI(clientNumber, clientName, clientInn, clientBg, docRef.id);
   })
   .catch(function(error) {
@@ -95,60 +81,41 @@ function saveRequest(clientNumber, clientName, clientInn, clientBg) {
   });
 }
 
-// Функция для сохранения изменений в активной заявке
-function saveCurrentRequest() {
+// Функция для загрузки заявок только для текущего пользователя
+function loadRequests() {
+  if (!currentUser) {
+    alert('Выберите пользователя');
+    return;
+  }
+
+  db.collection("requests").where("user", "==", currentUser).get()
+    .then(function(querySnapshot) {
+      document.querySelector('.tabs').innerHTML = ''; // Очищаем старые заявки
+      querySnapshot.forEach(function(doc) {
+        const requestData = doc.data();
+        addTabToUI(requestData.clientNumber, requestData.clientName, requestData.clientInn, requestData.clientBg, doc.id);
+      });
+    });
+}
+
+// Добавляем событие на выбор пользователя
+document.getElementById('select-user').addEventListener('click', selectUser);
+
+// Сохранение новой заявки
+document.querySelector('.add-tab').addEventListener('click', function() {
   const clientNumber = document.getElementById('client-number').value;
   const clientName = document.getElementById('client-name').value;
   const clientInn = document.getElementById('client-inn').value;
   const clientBg = document.getElementById('client-bg').value;
 
-  if (activeRequestId) {
-    db.collection("requests").doc(activeRequestId).update({
-      clientNumber: clientNumber,
-      clientName: clientName,
-      clientInn: clientInn,
-      clientBg: clientBg
-    })
-    .then(() => {
-      console.log("Параметры заявки обновлены для ID: ", activeRequestId);
-    })
-    .catch(error => {
-      console.error("Ошибка при обновлении заявки: ", error);
-    });
-  } else {
-    alert("Нет активной заявки для сохранения.");
-  }
-}
-
-// Пример вызова функции при создании заявки
-document.querySelector('.add-tab').addEventListener('click', function() {
-  var clientNumber = document.getElementById('client-number').value;
-  var clientName = document.getElementById('client-name').value;
-  var clientInn = document.getElementById('client-inn').value;
-  var clientBg = document.getElementById('client-bg').value;
-
   if (clientNumber && clientName && clientInn && clientBg) {
     saveRequest(clientNumber, clientName, clientInn, clientBg);
   } else {
-    alert('Пожалуйста, заполните все поля.');
+    alert('Заполните все поля.');
   }
 });
 
-// Кнопка сохранения параметров
-document.querySelector('.save-params').addEventListener('click', saveCurrentRequest);
-
-// Функция для загрузки заявок из Firestore
-function loadRequests() {
-  db.collection("requests").get().then(function(querySnapshot) {
-    querySnapshot.forEach(function(doc) {
-      var requestData = doc.data();
-      console.log("Заявка: ", requestData.clientNumber, " Клиент: ", requestData.clientName);
-      addTabToUI(requestData.clientNumber, requestData.clientName, requestData.clientInn, requestData.clientBg, doc.id);
-    });
-  });
-}
-
-// Загрузка заявок при открытии страницы
+// Загружаем заявки при открытии страницы (после выбора пользователя)
 window.onload = function() {
-  loadRequests();
+  // Ничего не загружаем, пока не выбран пользователь
 };
